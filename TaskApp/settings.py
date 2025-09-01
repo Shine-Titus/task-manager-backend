@@ -30,7 +30,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -88,7 +88,11 @@ WSGI_APPLICATION = 'TaskApp.wsgi.application'
 # }
 
 DATABASES = {
-    "default": dj_database_url.parse(config("DATABASE_URL"))
+    # "default": dj_database_url.parse(config("DATABASE_URL"))
+    "default" : {
+        'ENGINE' : "django.db.backends.sqlite3",
+        'NAME' : BASE_DIR / 'db.sqlite3'
+    }
 }
 
 
@@ -146,4 +150,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication'
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend', 
+        'rest_framework.filters.SearchFilter'
+    ]
 }
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/"

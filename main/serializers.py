@@ -5,11 +5,13 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TasksModel
-        fields = ['id', 'title', 'completed', 'created_at']
+        fields = ['id', 'title', 'completed', 'due_date', 'created_at']
 
     def create(self, validated_data):
         user = self.context['request'].user
-        return TasksModel.objects.create(user=user, **validated_data)
+        task = TasksModel.objects.create(user=user, **validated_data)
+        return task
+    
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:

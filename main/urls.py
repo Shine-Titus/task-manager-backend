@@ -7,6 +7,5 @@ urlpatterns = [
     path('view-tasks/<int:pk>/', views.ShowOrDeleteOrUpdateView.as_view(), name='task.showordeleteorupdate'),
     path('api/register/', views.RegisterView.as_view(), name='register'),
     path('view-tasks/<int:pk>/completed/', views.mark_completed, name='task.completed'),
-    path('summarize-tasks/', views.summarize_tasks, name='task.summarize')
-
+    path('summarize-tasks/', views.summarize_tasks, name='task.summarize'),
 ]

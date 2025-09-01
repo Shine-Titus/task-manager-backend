@@ -3,10 +3,9 @@ from .serializers import TaskSerializer ,RegisterSerializer
 from .models import TasksModel, User, TaskSummary
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, filters
+from rest_framework.decorators import api_view, permission_classes, APIView
 from django.shortcuts import get_object_or_404
-
 from django.conf import settings
 from openai import OpenAI
 
@@ -15,21 +14,22 @@ class ListTaskView(ListAPIView):
     queryset = TasksModel.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']
     
     def get_queryset(self):
         return TasksModel.objects.filter(user=self.request.user)
     
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
 
+        response = super().list(request, *args, **kwargs) 
         return Response ({
             "user": {
                 "id": request.user.id,
                 "username": request.user.username,
                 "email": request.user.email,
             },
-            "tasks": serializer.data
+            "tasks": response.data
         })
 
 class CreateTaskView(CreateAPIView):
@@ -88,5 +88,7 @@ def summarize_tasks(request):
         defaults= {'summary' : response.output_text}
     )
 
-
     return Response({'summary': summary_obj.summary})
+
+
+
